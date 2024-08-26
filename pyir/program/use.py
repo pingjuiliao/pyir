@@ -27,8 +27,12 @@ class Primitive(Use):
 
 class Identifier(Use):
     def __eq__(self, other):
-        return self._type == other._type
+        if not isinstance(other, Identifier):
+            return False
+        return self._value == other._value
 
+    def __hash__(self):
+        return hash(self._value)
 
 class Operator(component.PYIRComponent):
     @typeguard.typechecked

@@ -13,6 +13,8 @@ logger = logging.getLogger("opt.py")
 logging.basicConfig(level=logging.INFO)
 
 PASS_MAP = {
+    "dkp": "pyir.redundancy.tdce.InusedDefinitionElimination",
+    "tdce-one": "pyir.redundancy.tdce.InusedIdentifierElimination",
     "tdce": "pyir.redundancy.tdce.TrivialDeadCodeElimination",
 }
 
@@ -28,9 +30,9 @@ def optimize(module, passes):
             logger.error(f"Cannot find pass {pass_name}")
             quit()
         pass_module_name = PASS_MAP[pass_name]
-        module_name, class_name = pass_module.rsplit(".", 1)
-        module = __import__(module_name, fromlist=[class_name])
-        PassClass = getattr(module, class_name)
+        module_name, class_name = pass_module_name.rsplit(".", 1)
+        package = __import__(module_name, fromlist=[class_name])
+        PassClass = getattr(package, class_name)
         pass_manager.add_pass(PassClass())
 
     pass_manager.transform(module)
@@ -58,8 +60,6 @@ def main():
     passes = [] if args.passes is None else args.passes
     optimize(module, passes)
     module_json = interface.dump_json(module)
-    #fs = json.dumps(module_json, indent=2)
-    # print(fs)
     json.dump(module_json, sys.stdout)
 
 if __name__ == '__main__':

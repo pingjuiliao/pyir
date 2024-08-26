@@ -19,7 +19,7 @@ class Hierarchical(use.Use):
 
         self._child_type = child_type
         self._children_impl = (
-            hierarchical_impl.ArrayHierarchicalImpl(child_type)
+            hierarchical_impl.MapListHierarchicalImpl(child_type)
         )
         self._parent = None
         self._key_in_parent = None
@@ -30,13 +30,15 @@ class Hierarchical(use.Use):
         self._parent = parent
 
     def remove_from_parent(self):
-        self._hierarchical_impl.remove_from_parent(
-            self._parent,
-            self._key_in_parent
-        )
+        if self._parent is None:
+            raise "Parent is None"
+        self._parent.remove_key(self._key_in_parent)
+
+    def remove_key(self, key):
+        self._children_impl.remove_key(key)
 
     def get_children(self):
-        return self._children_impl.get_data()
+        return self._children_impl.get_list()
 
     @typeguard.typechecked
     def add_child(self, element):

@@ -18,30 +18,30 @@ class CompilerPass(object):
     def transform(self, module: program.Module) -> bool:
         """Change the module in-place
         """
-        self.interprocedural_optmize(module)
+        changed = self.interprocedural_optimize(module)
         for func in module.get_functions():
-            self.global_optimize(self, func)
+            changed |= self.global_optimize(func)
             for block in func.get_basic_blocks():
-                self.local_optimize(self, block)
-        return True
+                changed |= self.local_optimize(block)
+        return changed
 
     def interprocedural_optimize(self, module: program.Module) -> bool:
         """interprocedural optimization
             returns True for success response
         """
-        return True
+        return False
 
-    def global_opimize(self, func: program.Function) -> bool:
+    def global_optimize(self, func: program.Function) -> bool:
         """global optimization
             returns True for success response
         """
-        return True
+        return False
 
     def local_optimize(self, block: program.BasicBlock) -> bool:
         """local optimization
             returns True for success response
         """
-        return True
+        return False
 
 class CompilerPassComposite(CompilerPass):
     def __init__(self):

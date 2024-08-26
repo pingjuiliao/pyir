@@ -48,6 +48,18 @@ class Function(hierarchical.Hierarchical):
     def get_basic_blocks(self):
         return self.get_children()
 
+
+    def get_instructions(self) -> list[instruction.Instruction]:
+        """A handy function that allows user to get all instrucitons in
+            a list
+        """
+        instrs = []
+        for block in self.get_children():
+            for instr in block.get_children():
+                instrs.append(instr)
+        return instrs
+
+
     @typeguard.typechecked
     def add_basic_block(self, block: BasicBlock):
         self.add_child(block)

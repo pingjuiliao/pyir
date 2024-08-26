@@ -65,14 +65,14 @@ class BrilInterface(component.PYIRComponent):
                         curr_block.set_label(instruction_json["label"])
                     else:
                         function.add_basic_block(curr_block)
-                        curr_block = BasicBlock(instruction_json["label"])
+                        curr_block = program.BasicBlock(instruction_json["label"])
                     continue
 
                 instr = self._bril_to_ir(instruction_json)
                 curr_block.add_instruction(instr)
                 if instruction_json["op"] in TERMINATORS:
                     function.add_basic_block(curr_block)
-                    curr_block = BasicBlock()
+                    curr_block = program.BasicBlock()
 
             if not curr_block.is_empty():
                 function.add_basic_block(curr_block)
@@ -177,7 +177,7 @@ class BrilInterface(component.PYIRComponent):
         labels = []
         for i in range(instr.get_num_labels()):
             label = instr.get_label(i)
-            labels.append(label)
+            labels.append(label.get_value())
 
         if labels:
             instr_json["labels"] = labels

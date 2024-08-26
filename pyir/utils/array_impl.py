@@ -49,13 +49,14 @@ class ListArrayImpl(ArrayImpl):
 
     def remove_from_array(self, index):
         self._list[index] = None
-        self.pending_removal = True
+        self._pending_removal = True
 
     def __len__(self):
         self._resolve_removal()
         return len(self._list)
 
     def __str__(self):
+        self._resolve_removal()
         return str(self._list)
 
     def _resolve_removal(self):

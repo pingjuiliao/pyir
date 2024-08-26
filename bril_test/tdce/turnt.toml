@@ -1,0 +1,3 @@
+# command = "bril2json < {filename} | python3 ../../tdce.py {args} | bril2txt"
+command = "../../opt.py -c {filename} -p {args} | bril2txt"
+

@@ -5,20 +5,24 @@ import typeguard
 from typing import Optional
 
 from pyir import component
-from pyir.program import instruction, use, ir_type
+from pyir.program import instruction, use, ir_type, hierarchical
 from pyir.utils import array
 
-class BasicBlock(use.Identifier):
+
+class BasicBlock(hierarchical.Hierarchical):
     def __init__(self, label=None):
-        super().__init__(label, ir_type.IRType("module"))
+        super().__init__(
+            label,
+            ir_type.IRType("basic-block"),
+            instruction.Instruction
+        )
         self._label = label
-        self._instructions = array.Array(instruction.Instruction)
 
     def get_instructions(self):
-        return self._instructions
+        return self.get_children()
 
     def is_empty(self):
-        return len(self._instructions) == 0
+        return self.has_no_child()
 
     @typeguard.typechecked
     def set_label(self, label: str):
@@ -29,36 +33,37 @@ class BasicBlock(use.Identifier):
         return self._label
 
     @typeguard.typechecked
-    def add_instruction(self, inst: instruction.Instruction):
-        self._instructions.append(inst)
+    def add_instruction(self, instr: instruction.Instruction):
+        self.add_child(instr)
 
 
-class Function(use.Identifier):
+class Function(hierarchical.Hierarchical):
     def __init__(self, name):
-        super().__init__(name, ir_type.IRType("function"))
-        self._name = name
-        self._basic_blocks = array.Array(BasicBlock)
+        super().__init__(
+            name,
+            ir_type.IRType("function"),
+            BasicBlock
+        )
 
     def get_basic_blocks(self):
-        return self._basic_blocks
+        return self.get_children()
 
     @typeguard.typechecked
     def add_basic_block(self, block: BasicBlock):
-        self._basic_blocks.append(block)
-
-    def __str__(self):
-        return "function" + super().__str__()
+        self.add_child(block)
 
 
-class Module(use.Identifier):
+class Module(hierarchical.Hierarchical):
     def __init__(self, name=None):
-        super().__init__(name, ir_type.IRType("basic-block"))
-        self._name = name
-        self._functions = array.Array(Function)
+        super().__init__(
+            name,
+            ir_type.IRType("module"),
+            Function
+        )
 
     def get_functions(self):
-        return self._functions
+        return self.get_children()
 
     @typeguard.typechecked
     def add_function(self, func: Function):
-        self._functions.append(func)
+        self.add_child(func)

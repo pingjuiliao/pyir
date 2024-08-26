@@ -4,10 +4,14 @@ import typeguard
 from typing import Optional
 
 from pyir import component
-from pyir.program import use
+from pyir.program import use, hierarchical, ir_type
 
 
-class Instruction(component.PYIRComponent):
+class Instruction(hierarchical.Hierarchical):
+    """While this is a Hierarchical type, we (temporary) set
+        this as the last-level of hierarchy
+    """
+
     @typeguard.typechecked
     def __init__(
             self,
@@ -18,6 +22,11 @@ class Instruction(component.PYIRComponent):
             label0: Optional[use.Identifier] = None,
             label1: Optional[use.Identifier] = None
         ):
+        super().__init__(
+            name="some instruction",
+            use_type=ir_type.IRType("instruction"),
+            child_type=use.Use # it should have no chlid
+        )
         self._operator = operator
         self._destination = destination
         self._operand0 = operand0
@@ -45,6 +54,10 @@ class Instruction(component.PYIRComponent):
         if index == 0:
             return self._label0
         return self._label1
+
+    # hierarchical
+    def get_children(self):
+        return None
 
     def get_num_operands(self):
         raise NotImplementedError

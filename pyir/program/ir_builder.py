@@ -12,6 +12,9 @@ class IRBuilder(component.PYIRComponent):
         use.Operator("sub"): ir.SubtractInstruction,
         use.Operator("mul"): ir.AddInstruction,
         use.Operator("div"): ir.DivideInstruction,
+        use.Operator("and"): ir.AndInstruction,
+        use.Operator("or"): ir.OrInstruction,
+        use.Operator("not"): ir.NotInstruction,
         use.Operator("eq"): ir.EqualToInstruction,
         use.Operator("gt"): ir.GreaterThanInstruction,
         use.Operator("ge"): ir.GreaterThanOrEqualToInstruction,
@@ -19,6 +22,7 @@ class IRBuilder(component.PYIRComponent):
         use.Operator("le"): ir.LessThanOrEqualToInstruction,
         use.Operator("print"): ir.PrintInstruction,
         use.Operator("const"): ir.ConstantInstruction,
+        use.Operator("id"): ir.IdInstruction,
         use.Operator("jmp"): ir.JumpInstruction,
         use.Operator("br"): ir.BranchInstruction,
     }

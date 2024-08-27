@@ -18,6 +18,8 @@ class IRType(component.PYIRComponent):
             return False
         return self._type_name == other._type_name
 
+    def __hash__(self):
+        return hash(self._type_name)
 """
 class IRTypeInferencer(component.PYIRComponent):
     TYPE_MAP = {

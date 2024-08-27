@@ -22,10 +22,25 @@ class Use(component.PYIRComponent):
 
 class Primitive(Use):
     def __eq__(self, other):
-        return self._value == other._value
+        if not isinstance(other, Primitive):
+            return False
+        return self._value == other._value and self._type == other._type
 
+    def __repr__(self):
+        return str(tuple([self._value, self._type]))
+
+    def __hash__(self):
+        return hash(self.__repr__())
 
 class Identifier(Use):
+    def rename_as(self, new_name):
+        if not isinstance(new_name, Identifier):
+            raise TypeError
+        new_name_str = new_name.get_value()
+        if not isinstance(new_name_str, str):
+            raise TypeError
+        self._value = new_name_str
+
     def __eq__(self, other):
         if not isinstance(other, Identifier):
             return False

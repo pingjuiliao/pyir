@@ -34,7 +34,13 @@ class Hierarchical(use.Use):
             raise "Parent is None"
         self._parent.remove_key(self._key_in_parent)
 
+    def insert_next(self, element):
+        if self._parent is None:
+            raise "Parent is None"
+        self._parent.insert_child(element, self._key_in_parent)
+
     def remove_key(self, key):
+        # TODO: change name to remove children
         self._children_impl.remove_key(key)
 
     def get_children(self):
@@ -45,6 +51,13 @@ class Hierarchical(use.Use):
         if not isinstance(element, self._child_type):
             raise TypeError
         element._key_in_parent = self._children_impl.append(element)
+        element.set_parent(self)
+
+    def insert_child(self, element, key):
+        if not isinstance(element, self._child_type):
+            raise TypeError
+        element._key_in_parent = (self._children_impl.
+                                  insert_as_next(element, key))
         element.set_parent(self)
 
     def has_no_child(self) -> bool:

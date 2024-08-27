@@ -22,6 +22,20 @@ class DivideInstruction(instruction.BinaryInstruction):
         return "div"
 
 
+class AndInstruction(instruction.BinaryInstruction):
+    def string_code(self):
+        return "and"
+
+
+class OrInstruction(instruction.BinaryInstruction):
+    def string_code(self):
+        return "or"
+
+
+class NotInstruction(instruction.UnaryInstruction):
+    def string_code(self):
+        return "not"
+
 class EqualToInstruction(instruction.BinaryInstruction):
     def string_code(self):
         return "eq"
@@ -56,6 +70,12 @@ class ConstantInstruction(instruction.UnaryInstruction):
     def string_code(self):
         return "const"
 
+
+class IdInstruction(instruction.UnaryInstruction):
+    def string_code(self):
+        return "id"
+
+
 class JumpInstruction(instruction.Instruction):
     def string_code(self):
         return "jmp"
@@ -65,6 +85,7 @@ class JumpInstruction(instruction.Instruction):
 
     def get_num_labels(self):
         return 1
+
 
 class BranchInstruction(instruction.Instruction):
     def string_code(self):

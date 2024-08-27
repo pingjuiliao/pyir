@@ -65,5 +65,9 @@ class MapListHierarchicalImpl(HierarchicalImpl):
         if self._map_list.remove(key):
             self._count -= 1
 
+    def insert_as_next(self, element, key):
+        self._count += 1
+        return self._map_list.insert_next(element, key)
+
     def is_empty(self):
         return self._count == 0

@@ -1,4 +1,4 @@
-# ARGS: -f
+# ARGS: lvn
 
 @main(arg1: int, arg2: int) {
   a: int = const 4;

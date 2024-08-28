@@ -1,6 +1,9 @@
 #!/usr/bin/env python3
 
+import typeguard
+
 from pyir.program import use, ir_type
+
 
 class NumberingEncoding:
     """My encoding scheme is simple:
@@ -29,7 +32,8 @@ class NumberingValue:
     def set_operator(self, new_operator):
         self._operator = new_operator
 
-    def add_operand(self, operand: use.Identifier):
+    @typeguard.typechecked
+    def add_operand(self, operand: use.Use):
         self._operands.append(operand)
 
     def __repr__(self):

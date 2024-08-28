@@ -6,7 +6,7 @@ from typing import Optional
 
 from pyir import component
 from pyir.program import use, instruction, ir_type, ir_builder, program
-from pyir.redundancy.numbering import encoding
+from pyir.redundancy.numbering import encoding, extension
 
 class NumberingTableEntry:
     @typeguard.typechecked
@@ -22,13 +22,18 @@ class NumberingTableEntry:
 
 
 class LocalNumberingTable(component.PYIRComponent):
-    def __init__(self, block: program.BasicBlock):
+    def __init__(
+        self, block: program.BasicBlock):
         self._entries = []
         self._value_to_entry = {}
         self._id_to_entry = {}
         self._ir_builder = ir_builder.IRBuilder()
-
+        self._extensions = []
         self.initialize(block)
+
+    def add_extensions(self, *new_extensions):
+        for new_extension in new_extensions:
+            self._extensions.append(new_extension)
 
     def initialize(self, block):
         self.last_write = {}
@@ -63,6 +68,10 @@ class LocalNumberingTable(component.PYIRComponent):
             else:
                 numbering_value.add_operand(operand)
 
+        # 1st point of running extension
+        for extension in self._extensions:
+            numbering_value = extension.update_value(numbering_value, self)
+
         # The value has been used before:
         if numbering_value in self._value_to_entry:
             self._id_to_entry[variable] = \
@@ -93,6 +102,11 @@ class LocalNumberingTable(component.PYIRComponent):
         self._id_to_entry[new_number] = new_entry
         self._id_to_entry[variable] = new_entry
         self._value_to_entry[numbering_value] = new_entry
+
+        # 2nd point of running extension:
+        for extension in self._extensions:
+            extension.update_table(new_entry, self)
+
         return encoding.NumberingEncoding(new_number)
 
     def reconstruct(
@@ -111,14 +125,36 @@ class LocalNumberingTable(component.PYIRComponent):
             operands.append(operand)
 
         if identifier.get_type() == ir_type.IRType("numbering-number"):
+            if entry.variable.get_type() == ir_type.IRType("null"):
+                destination = None
+            else:
+                destination = entry.variable
+
             return self._ir_builder.build(
                 operator=entry.value.get_operator(),
-                destination=entry.variable,
+                destination=destination,
                 operands=operands,
                 labels=[]
             )
 
         # TODO: place for "id" or "const" propagation
+        for extension in self._extensions:
+            new_value = extension.get_propagated_value(
+                identifier,
+                entry,
+                self
+            )
+            if new_value is None:
+                continue
+
+            new_operands = [new_value.get_operand(i) \
+                        for i in range(new_value.get_num_operands())]
+            return self._ir_builder.build(
+                operator=new_value.get_operator(),
+                destination=identifier,
+                operands=new_operands,
+                labels=[]
+            )
 
         return self._ir_builder.build(
             operator=use.Operator("id"),
@@ -143,6 +179,10 @@ class LocalNumberingTable(component.PYIRComponent):
             f.write(header + body)
             f.close()
 
+    def get_entry_by_number(self, number: use.Identifier) -> NumberingTableEntry:
+        if number.get_type() != ir_type.IRType("numbering-number"):
+            raise TypeError
+        return self._id_to_entry[number]
 
     def _rename_with_number(self,
         number: int,

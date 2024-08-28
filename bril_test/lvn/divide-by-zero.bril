@@ -1,3 +1,5 @@
+# ARGS: lvn
+
 @main {
 .entry:
   zero : int = const 0;

@@ -1,4 +1,4 @@
-# ARGS: -p
+# ARGS: lvn
 @main {
   x: int = const 1;
 .lb:

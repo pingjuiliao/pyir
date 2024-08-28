@@ -16,7 +16,9 @@ PASS_MAP = {
     "dkp": "pyir.redundancy.tdce.InusedDefinitionElimination",
     "tdce-one": "pyir.redundancy.tdce.InusedIdentifierElimination",
     "tdce": "pyir.redundancy.tdce.TrivialDeadCodeElimination",
+    "lvn-raw": "pyir.redundancy.lvn.LocalValueNumberingRaw",
     "lvn": "pyir.redundancy.lvn.LocalValueNumbering",
+    "lvn-fold": "pyir.redundancy.lvn.LocalValueNumbering",
 }
 
 

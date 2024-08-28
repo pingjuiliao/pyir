@@ -1,3 +1,4 @@
+# ARGS: lvn
 @main {
   v1: int = const 4;
   v2: int = const 0;

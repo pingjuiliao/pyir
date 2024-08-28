@@ -142,7 +142,8 @@ class LocalNumberingTable(component.PYIRComponent):
                 destination = entry.variable
             else:
                 destination = identifier
-
+            if destination.get_type() == ir_type.IRType("null"):
+                destination = None
             return self._ir_builder.build(
                 operator=new_value.get_operator(),
                 destination=destination,

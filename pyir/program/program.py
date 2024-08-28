@@ -44,10 +44,13 @@ class Function(hierarchical.Hierarchical):
             ir_type.IRType("function"),
             BasicBlock
         )
+        self._arguments = []
+
+    def get_arguments(self):
+        return self._arguments
 
     def get_basic_blocks(self):
         return self.get_children()
-
 
     def get_instructions(self) -> list[instruction.Instruction]:
         """A handy function that allows user to get all instrucitons in
@@ -59,6 +62,9 @@ class Function(hierarchical.Hierarchical):
                 instrs.append(instr)
         return instrs
 
+    @typeguard.typechecked
+    def add_argument(self, arg: use.Identifier):
+        self._arguments.append(arg)
 
     @typeguard.typechecked
     def add_basic_block(self, block: BasicBlock):

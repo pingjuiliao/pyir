@@ -56,6 +56,12 @@ class BrilInterface(component.PYIRComponent):
         for function_json in json_dict['functions']:
             function = program.Function(function_json['name'])
 
+            if "args" in function_json:
+                for arg_json in function_json["args"]:
+                    use_type = ir_type.IRType(arg_json["type"])
+                    arg = use.Identifier(arg_json["name"], use_type)
+                    function.add_argument(arg)
+
             # parse split basic_block
             curr_block = program.BasicBlock()
             for instruction_json in function_json['instrs']:
@@ -131,6 +137,16 @@ class BrilInterface(component.PYIRComponent):
         module_json["functions"] = []
         for function in module.get_functions():
             function_json = {}
+            argv = []
+            for arg in function.get_arguments():
+                arg_json = {
+                    "name": arg.get_value(),
+                    "type": arg.get_type().get_name()
+                }
+                argv.append(arg_json)
+            if argv:
+                function_json["args"] = argv
+
             instrs = []
             for block in function.get_basic_blocks():
                 label = block.get_label()

@@ -1,4 +1,4 @@
-# ARGS: lvn-fold
+# ARGS: lvn-raw
 @main {
   x: int = const 4;
   copy1: int = id x;

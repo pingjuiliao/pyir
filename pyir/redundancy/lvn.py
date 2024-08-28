@@ -50,7 +50,6 @@ class LocalValueNumberingConstantFold(ir_pass.CompilerPass):
         # init
         lvn_table = table.LocalNumberingTable(block)
         lvn_table.add_extensions(
-            extension.CommutativityExtension(),
             extension.ConstantFoldExtension(),
         )
 

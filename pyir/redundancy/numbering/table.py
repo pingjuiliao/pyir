@@ -124,6 +124,32 @@ class LocalNumberingTable(component.PYIRComponent):
                 operand = referred_entry.variable
             operands.append(operand)
 
+
+        # Extensions have the priority to reconstruct the value
+        for extension in self._extensions:
+            new_value = extension.get_propagated_value(
+                identifier,
+                entry,
+                self
+            )
+            if new_value is None:
+                continue
+
+            new_operands = [new_value.get_operand(i) \
+                            for i in range(new_value.get_num_operands())]
+
+            if identifier.get_type() == ir_type.IRType("numbering-number"):
+                destination = entry.variable
+            else:
+                destination = identifier
+
+            return self._ir_builder.build(
+                operator=new_value.get_operator(),
+                destination=destination,
+                operands=new_operands,
+                labels=[]
+            )
+
         if identifier.get_type() == ir_type.IRType("numbering-number"):
             if entry.variable.get_type() == ir_type.IRType("null"):
                 destination = None
@@ -137,24 +163,6 @@ class LocalNumberingTable(component.PYIRComponent):
                 labels=[]
             )
 
-        # TODO: place for "id" or "const" propagation
-        for extension in self._extensions:
-            new_value = extension.get_propagated_value(
-                identifier,
-                entry,
-                self
-            )
-            if new_value is None:
-                continue
-
-            new_operands = [new_value.get_operand(i) \
-                        for i in range(new_value.get_num_operands())]
-            return self._ir_builder.build(
-                operator=new_value.get_operator(),
-                destination=identifier,
-                operands=new_operands,
-                labels=[]
-            )
 
         return self._ir_builder.build(
             operator=use.Operator("id"),

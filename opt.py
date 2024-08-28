@@ -18,7 +18,7 @@ PASS_MAP = {
     "tdce": "pyir.redundancy.tdce.TrivialDeadCodeElimination",
     "lvn-raw": "pyir.redundancy.lvn.LocalValueNumberingRaw",
     "lvn": "pyir.redundancy.lvn.LocalValueNumbering",
-    "lvn-fold": "pyir.redundancy.lvn.LocalValueNumbering",
+    "lvn-fold": "pyir.redundancy.lvn.LocalValueNumberingConstantFold",
 }
 
 
